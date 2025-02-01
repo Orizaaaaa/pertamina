@@ -35,8 +35,8 @@ const Page = () => {
     return (
         <DefaultLayout>
             <Card>
-                <h1 className='text-xl font-medium '>Jurnal Umum</h1>
-                <p className='text-slate-500 text-small' >Semua pencatatan transaksi akan masuk dan di catat ke dalam jurnal umum</p>
+                <h1 className='text-xl font-medium '>Arsip </h1>
+                <p className='text-slate-500 text-small' >Semua pencatatan transaksi akan masuk dan di catat ke dalam arsip</p>
                 <div className="total mt-4">
                     <h1>Total Debit : Rp </h1>
                     <h1>Total Kredit: Rp </h1>
