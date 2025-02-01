@@ -1,8 +1,8 @@
 import { url } from "inspector";
 import { axiosInterceptor } from "./axiosInterceptor"
 
-export const createTransaction = async (form: any, callback: any) => {
-    await axiosInterceptor.post('/journal', form)
+export const createTransactionType = async (form: any, callback: any) => {
+    await axiosInterceptor.post('/transactions-type', form)
         .then((result) => {
             callback(result.data)
         }).catch((err) => {
@@ -11,6 +11,15 @@ export const createTransaction = async (form: any, callback: any) => {
 
         });
 
+}
+
+export const getTransactionType = (callback: any) => {
+    axiosInterceptor.get('/transactions-type/list')
+        .then((result) => {
+            callback(result.data)
+        }).catch((err) => {
+            callback(err);
+        });
 }
 
 export const getJurnalUmum = (startDate: string, endDate: string, callback: any) => {
@@ -114,14 +123,8 @@ export const GetLabaRugi = (startDate: string, endDate: string, callback: any) =
 
 }
 
-export const getDataCart = (callback: any) => {
-    axiosInterceptor.get('/balance/finance-data')
-        .then((result) => {
-            callback(result.data)
-        }).catch((err) => {
-            callback(err);
-        });
-}
+
+
 
 export const deleteAllJournal = async (callback: (result: any) => void) => {
     try {
