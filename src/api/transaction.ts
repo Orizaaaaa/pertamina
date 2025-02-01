@@ -22,6 +22,15 @@ export const getTransactionType = (callback: any) => {
         });
 }
 
+export const deleteTransactionType = async (id: string, callback: any) => {
+    axiosInterceptor.delete(`transactions-type/${id}`)
+        .then((result) => {
+            callback(result.data)
+        }).catch((err) => {
+            callback(err);
+        });
+}
+
 export const getJurnalUmum = (startDate: string, endDate: string, callback: any) => {
     axiosInterceptor.get('/journal/list', { params: { startDate: startDate, endDate: endDate } })
         .then((result) => {

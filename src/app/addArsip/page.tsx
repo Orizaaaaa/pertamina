@@ -1,5 +1,5 @@
 'use client'
-import { createTransactionType, getTransactionType } from '@/api/transaction'
+import { createTransactionType, deleteTransactionType, getTransactionType } from '@/api/transaction'
 import ButtonPrimary from '@/components/elements/buttonPrimary'
 import ButtonSecondary from '@/components/elements/buttonSecondary'
 import Card from '@/components/elements/card/Card'
@@ -14,6 +14,7 @@ type Props = {}
 const Page = (props: Props) => {
     const { isOpen: openDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure()
     const [data, setData] = useState([])
+    const [id, setId] = useState('')
 
     useEffect(() => {
         getTransactionType((res: any) => {
@@ -33,14 +34,16 @@ const Page = (props: Props) => {
     };
 
     const modalDeleteOpen = (item: any) => {
-        console.log(item);
+        setId(item)
         onOpenDelete()
     }
 
     console.log(form);
 
     const handleCreate = async () => {
-        await createTransactionType(form, (res: any) => {
+        await createTransactionType(form, (response: any) => {
+            console.log(response);
+
             getTransactionType((res: any) => {
                 setData(res.data)
             })
@@ -50,6 +53,17 @@ const Page = (props: Props) => {
             name: '',
             type1: '',
             type2: ''
+        })
+    }
+
+    const handleDelete = async () => {
+        await deleteTransactionType(id, (res: any) => {
+            console.log(res);
+
+            getTransactionType((res: any) => {
+                setData(res.data)
+            })
+            onCloseDelete()
         })
     }
 
@@ -84,7 +98,7 @@ const Page = (props: Props) => {
                                 <TableCell>
                                     <div className="flex gap-3">
                                         <ButtonPrimary className='py-1 px-3 rounded-md' >Edit</ButtonPrimary>
-                                        <ButtonSecondary className='py-1 px-3 rounded-md' onClick={() => modalDeleteOpen('wakwaw')} >Delete</ButtonSecondary>
+                                        <ButtonSecondary className='py-1 px-3 rounded-md' onClick={() => modalDeleteOpen(item.id)} >Delete</ButtonSecondary>
                                     </div>
                                 </TableCell>
                             </TableRow>
@@ -97,7 +111,7 @@ const Page = (props: Props) => {
             <ModalAlert isOpen={openDelete} onClose={onCloseDelete} >
                 <h1 className='text-lg' >Apakah anda yakin akan menghapus tipe transaksi ini ? </h1>
                 <div className="flex justify-end gap-3">
-                    <ButtonPrimary className='py-1 px-5 rounded-md font-medium'   >Ya</ButtonPrimary>
+                    <ButtonPrimary className='py-1 px-5 rounded-md font-medium' onClick={handleDelete}  >Ya</ButtonPrimary>
                     <ButtonSecondary className='py-1 px-5 rounded-md font-medium' onClick={onCloseDelete}>Tidak</ButtonSecondary>
                 </div>
             </ModalAlert>
