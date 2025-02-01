@@ -1,0 +1,16 @@
+import manusiaLaptop from '../assets/manusiaLaptop.svg'
+import logo from '../assets/logo.svg'
+import money from '../assets/money.svg'
+import article from '../assets/1.svg'
+import user from '../assets/2.svg'
+import article2 from '../assets/3.svg'
+import outCome from '../assets/outCome.svg'
+import yellowDolar from '../assets/yellowDolar.svg'
+import oneLogo from '../assets/logo.svg'
+import inputIMage from '../assets/inputIMage.png'
+import camera from '../assets/camera.png'
+import ig from '../assets/ig.png'
+import tiktok from '../assets/tiktok.png'
+import warning from '../assets/warning.png'
+
+export { manusiaLaptop, logo, money, inputIMage, oneLogo, camera, warning, outCome, yellowDolar, ig, tiktok, article, article2, user }
