@@ -66,7 +66,7 @@ const Login = () => {
             localStorage.setItem('role', res?.data?.role);
             localStorage.setItem('token', res?.data?.token);
           }
-          router.push('/dashboard');
+          router.push('/arsip');
           setLoading(false)
         }
       } else {

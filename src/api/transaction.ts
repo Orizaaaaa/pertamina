@@ -31,6 +31,24 @@ export const deleteTransactionType = async (id: string, callback: any) => {
         });
 }
 
+export const updateTransactionType = async (id: string, form: any, callback: any) => {
+    await axiosInterceptor.put(`transactions-type/${id}`, form)
+        .then((result) => {
+            callback(result.data)
+        }).catch((err) => {
+            callback(err);
+        });
+}
+
+export const getDataCart = (callback: any) => {
+    axiosInterceptor.get('/balance/finance-data')
+        .then((result) => {
+            callback(result.data)
+        }).catch((err) => {
+            callback(err);
+        });
+}
+
 export const getJurnalUmum = (startDate: string, endDate: string, callback: any) => {
     axiosInterceptor.get('/journal/list', { params: { startDate: startDate, endDate: endDate } })
         .then((result) => {
@@ -41,14 +59,7 @@ export const getJurnalUmum = (startDate: string, endDate: string, callback: any)
 
 }
 
-export const updateJurnalUmum = async (id: string, form: any, callback: any) => {
-    await axiosInterceptor.put(`journal/${id}`, form)
-        .then((result) => {
-            callback(result.data)
-        }).catch((err) => {
-            callback(err);
-        });
-}
+
 
 export const deleteJurnal = async (id: string, callback: any) => {
     axiosInterceptor.delete(`journal/${id}`)

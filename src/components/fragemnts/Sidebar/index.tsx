@@ -117,8 +117,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
           <div>
             <ul className="mb-6 flex flex-col gap-1.5">
               {/* <!-- Menu Item Dashboard --> */}
-              <NavigationList icon={<RxDashboard size={19} />} title="Dasboard" pathname="/dashboard" />
-              <NavigationList icon={<BsArchive size={19} />} title="Semua Arsip" pathname="/arsip" />
+              <NavigationList icon={<RxDashboard size={19} />} title="Semua Arsip" pathname="/arsip" />
+              {/* <NavigationList icon={<BsArchive size={19} />} title="Semua Arsip" pathname="/arsip" /> */}
               <NavigationList icon={<LuArchiveRestore size={22} />} title="Tambah Arsip" pathname="/addArsip" />
               <ButtonSecondary className="w-full py-1 rounded-md font-medium" onClick={handleLogout} >Logout</ButtonSecondary>
 
