@@ -8,11 +8,7 @@ import { logo } from "@/app/image";
 import Image from "next/image";
 import { BsArchive } from "react-icons/bs";
 import ButtonSecondary from "@/components/elements/buttonSecondary";
-import { LuArchiveRestore, LuBookDown, LuBookPlus } from "react-icons/lu";
-import { MdOutlineLibraryBooks } from "react-icons/md";
-import { RiBook2Line, RiTiktokLine } from "react-icons/ri";
-import { TbMoneybag } from "react-icons/tb";
-import { HiOutlineArchiveBox } from "react-icons/hi2";
+import { SiGitbook } from "react-icons/si";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -119,7 +115,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               {/* <!-- Menu Item Dashboard --> */}
               <NavigationList icon={<RxDashboard size={19} />} title="Semua Arsip" pathname="/arsip" />
               {/* <NavigationList icon={<BsArchive size={19} />} title="Semua Arsip" pathname="/arsip" /> */}
-              <NavigationList icon={<LuArchiveRestore size={22} />} title="Tambah Arsip" pathname="/addArsip" />
+              <NavigationList icon={<SiGitbook size={22} />} title="Tipe Transaksi" pathname="/TypeTransaction" />
               <ButtonSecondary className="w-full py-1 rounded-md font-medium" onClick={handleLogout} >Logout</ButtonSecondary>
 
 

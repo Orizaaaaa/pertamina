@@ -1,5 +1,5 @@
 'use client'
-import { createTransactionType, deleteTransactionType, getTransactionType } from '@/api/transaction'
+import { createTransactionType, deleteTransactionType, getTransactionType, updateTransactionType } from '@/api/transaction'
 import ButtonPrimary from '@/components/elements/buttonPrimary'
 import ButtonSecondary from '@/components/elements/buttonSecondary'
 import Card from '@/components/elements/card/Card'
@@ -43,17 +43,55 @@ const Page = (props: Props) => {
         setForm({ ...form, [name]: value });
     };
 
+    const handleChangeEdit = (e: any) => {
+        const { name, value } = e.target;
+        setFormEdit((prev) => ({ ...prev, [name]: value }));
+    };
+
+
+
+
     const modalDeleteOpen = (item: any) => {
         setId(item)
         onOpenDelete()
     }
     const modalEditOpen = (item: any) => {
+        console.log(item);
+        setId(item.id)
+        // Ekstrak isi dalam tanda ()
+        const match = item.name.match(/\(([^)]+)\)/);
+        let type1 = '';
+        let type2 = '';
 
-        onOpen()
-        setFormEdit(prev => ({ ...prev, name: item.name }));
+        if (match) {
+            const types = match[1].split(/\s*&\s*/); // Pisahkan berdasarkan " & "
+            type1 = types[0] || '';
+            type2 = types[1] || '';
+        }
+
+        onOpen();
+
+        // Update hanya formEdit
+        setFormEdit(prev => ({
+            ...prev,
+            name: item.bank,
+            type1,
+            type2
+        }));
+    };
+
+
+
+    const handleEdit = async () => {
+        await updateTransactionType(id, formEdit, (response: any) => {
+            console.log(response);
+            getTransactionType((res: any) => {
+                setData(res.data)
+            })
+            onClose()
+        })
     }
 
-    console.log(form);
 
     const handleCreate = async () => {
         await createTransactionType(form, (response: any) => {
@@ -81,6 +119,9 @@ const Page = (props: Props) => {
             onCloseDelete()
         })
     }
+
+    console.log(formEdit);
+
 
     return (
         <DefaultLayout>
@@ -133,14 +174,14 @@ const Page = (props: Props) => {
 
             <ModalDefault isOpen={isOpen} onClose={onClose} >
                 <form action="">
-                    <h1 className='my-5 text-xl font-medium italic'>Buat Tipe Transaksi</h1>
-                    <InputForm className='border-2' type='text' value={form.name} htmlFor='name' placeholder='Masukan Nama Bank' onChange={handleChange} />
+                    <h1 className='my-5 text-xl font-medium italic'>Edit Tipe Transaksi</h1>
+                    <InputForm className='border-2' type='text' value={formEdit.name} htmlFor='name' placeholder='Masukan Nama Bank' onChange={handleChangeEdit} />
                     <div className="flex gap-2">
-                        <InputForm className='border-2' type='text' value={form.type1} htmlFor='type1' placeholder='Masukan Tipe 1' onChange={handleChange} />
-                        <InputForm className='border-2' type='text' value={form.type2} htmlFor='type2' placeholder='Masukan Tipe 2' onChange={handleChange} />
+                        <InputForm className='border-2' type='text' value={formEdit.type1} htmlFor='type1' placeholder='Masukan Tipe 1' onChange={handleChangeEdit} />
+                        <InputForm className='border-2' type='text' value={formEdit.type2} htmlFor='type2' placeholder='Masukan Tipe 2' onChange={handleChangeEdit} />
                     </div>
                     <div className="flex justify-end">
-                        <ButtonPrimary className='py-1 px-5 rounded-lg' onClick={handleCreate}>Simpan</ButtonPrimary>
+                        <ButtonPrimary className='py-1 px-5 rounded-lg' onClick={handleEdit}>Simpan</ButtonPrimary>
                     </div>
                 </form>
             </ModalDefault>
