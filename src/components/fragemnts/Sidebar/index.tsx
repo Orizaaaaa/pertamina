@@ -9,6 +9,7 @@ import Image from "next/image";
 import { BsArchive } from "react-icons/bs";
 import ButtonSecondary from "@/components/elements/buttonSecondary";
 import { SiGitbook } from "react-icons/si";
+import { FaMoneyBillTransfer } from "react-icons/fa6";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -116,6 +117,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               <NavigationList icon={<RxDashboard size={19} />} title="Semua Arsip" pathname="/arsip" />
               {/* <NavigationList icon={<BsArchive size={19} />} title="Semua Arsip" pathname="/arsip" /> */}
               <NavigationList icon={<SiGitbook size={22} />} title="Tipe Transaksi" pathname="/TypeTransaction" />
+              <NavigationList icon={<FaMoneyBillTransfer size={22} />} title="Tambah Transaksi" pathname="/addTransaction" />
               <ButtonSecondary className="w-full py-1 rounded-md font-medium" onClick={handleLogout} >Logout</ButtonSecondary>
 
 

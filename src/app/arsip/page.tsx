@@ -38,8 +38,8 @@ const Page = () => {
                 <h1 className='text-xl font-medium '>Arsip </h1>
                 <p className='text-slate-500 text-small' >Semua pencatatan transaksi akan masuk dan di catat ke dalam arsip</p>
                 <div className="total mt-4">
-                    <h1>Total Debit : Rp </h1>
-                    <h1>Total Kredit: Rp </h1>
+                    {/* <h1>Total Debit : Rp </h1>
+                    <h1>Total Kredit: Rp </h1> */}
                 </div>
                 <div className="space-y-3 lg:space-y-0 lg:flex  justify-end gap-2 mt-3 lg:mt-0">
                     <ButtonSecondary className=' px-4 rounded-md'>Download dalam bentuk Excel</ButtonSecondary>
