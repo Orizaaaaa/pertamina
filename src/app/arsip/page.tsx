@@ -63,7 +63,6 @@ const Page = () => {
     const startDate = formatDateStr(date.start);
     const endDate = formatDateStr(date.end);
     console.log(startDate, endDate);
-    console.log(data);
 
     const [form, setForm] = useState({
         mid: "",
@@ -129,6 +128,8 @@ const Page = () => {
     };
 
     console.log(dataDrop);
+    console.log('anjing', data);
+
 
 
     return (
@@ -213,10 +214,6 @@ const Page = () => {
 
                 </TableBody>
             </Table>
-
-            {data?.map((item: any, index: number) => (
-                <h1 key={index} >{item._id}</h1>
-            ))}
 
 
             <ModalDefault isOpen={isOpen} onClose={onClose}>
