@@ -1,4 +1,7 @@
 'use client'
+import { url } from '@/api/auth'
+import { fetcher } from '@/api/fetcher'
+import { getTransactionType } from '@/api/transaction'
 import ButtonPrimary from '@/components/elements/buttonPrimary'
 import Card from '@/components/elements/card/Card'
 import InputForm from '@/components/elements/input/InputForm'
@@ -6,15 +9,26 @@ import DefaultLayout from '@/components/layouts/DefaultLayout'
 import { formatDate, formatDateStr } from '@/utils/helper'
 import { parseDate } from '@internationalized/date'
 import { Autocomplete, AutocompleteItem, DatePicker } from '@nextui-org/react'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import useSWR from 'swr'
 
 type Props = {}
+
+interface DropdownItem {
+    label: string;
+    value: string;
+}
+
+interface ItemData {
+    id: string;
+    name: string;
+}
 
 const Page = (props: Props) => {
     const [form, setForm] = useState({
         mid: "",
         tid: "",
-        transaction_type: 0,
+        transaction_type: "",
         batch: "",
         amount: "",
         net_amount: "",
@@ -25,6 +39,13 @@ const Page = (props: Props) => {
     });
     const dateNow = new Date();
     const [selectedDate, setSelectedDate] = useState(parseDate((formatDate(dateNow))))
+
+    const { data } = useSWR(`${url}/transactions-type/list`, fetcher, {
+        keepPreviousData: true,
+    });
+
+
+
     const handleDateChange = (date: any | null) => {
         setSelectedDate(date);
         setForm((prevForm) => ({
@@ -54,31 +75,32 @@ const Page = (props: Props) => {
         setForm({ ...form, [name]: value });
     };
 
+    const dataDropdown: DropdownItem[] = (data?.data || []).map((item: ItemData) => ({
+        label: item.name,
+        value: item.id
+    }));
 
-    const dataDropdown = [
-        { label: "Aset", value: 1, },
-        { label: "Kewajiban", value: 2, },
-        { label: "Ekuitas", value: 3 },
-        { label: "Pendapatan", value: 4 },
-        { label: "Beban", value: 5 },
-    ];
-
-    const handleDropdownSelection = (selectedValue: number, option: string) => {
+    const handleDropdownSelection = (selectedValue: string, option: string) => {
         console.log('haii', selectedValue);
 
         if (option === 'form') {
             setForm((prevForm) => ({
                 ...prevForm,
-                transaction_type: Number(selectedValue),
+                transaction_type: String(selectedValue),
             }))
         } else {
             setForm((prevForm) => ({
                 ...prevForm,
-                transaction_type: Number(selectedValue),
+                transaction_type: String(selectedValue),
             }));
         }
 
     };
+
+    console.log(data);
+    console.log(form);
+
+
 
     return (
         <DefaultLayout>
@@ -111,7 +133,7 @@ const Page = (props: Props) => {
                         <div className="space-y-2">
                             <h1>Tipe Transaksi</h1>
                             <Autocomplete
-                                clearButtonProps={{ size: 'sm', onClick: () => setForm({ ...form, transaction_type: 0 }) }}
+                                clearButtonProps={{ size: 'sm', onClick: () => setForm({ ...form, transaction_type: "" }) }}
                                 onSelectionChange={(e: any) => handleDropdownSelection(e, 'form')}
                                 defaultItems={dataDropdown}
                                 defaultSelectedKey={form.transaction_type}
