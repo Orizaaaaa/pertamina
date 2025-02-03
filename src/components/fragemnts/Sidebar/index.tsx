@@ -10,6 +10,7 @@ import { BsArchive } from "react-icons/bs";
 import ButtonSecondary from "@/components/elements/buttonSecondary";
 import { SiGitbook } from "react-icons/si";
 import { FaMoneyBillTransfer } from "react-icons/fa6";
+import { IoReceiptOutline } from "react-icons/io5";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -116,8 +117,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               {/* <!-- Menu Item Dashboard --> */}
               <NavigationList icon={<RxDashboard size={19} />} title="Semua Arsip" pathname="/arsip" />
               {/* <NavigationList icon={<BsArchive size={19} />} title="Semua Arsip" pathname="/arsip" /> */}
+              <NavigationList icon={<IoReceiptOutline size={22} />} title="Catat Transaksi" pathname="/addTransaction" />
               <NavigationList icon={<SiGitbook size={22} />} title="Tipe Transaksi" pathname="/TypeTransaction" />
-              <NavigationList icon={<FaMoneyBillTransfer size={22} />} title="Tambah Transaksi" pathname="/addTransaction" />
+
               <ButtonSecondary className="w-full py-1 rounded-md font-medium" onClick={handleLogout} >Logout</ButtonSecondary>
 
 

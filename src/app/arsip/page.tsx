@@ -1,4 +1,5 @@
 'use client'
+import { getTransaction } from '@/api/transaction'
 import ButtonPrimary from '@/components/elements/buttonPrimary'
 import ButtonSecondary from '@/components/elements/buttonSecondary'
 import Card from '@/components/elements/card/Card'
@@ -8,9 +9,18 @@ import DefaultLayout from '@/components/layouts/DefaultLayout'
 import { dateFirst, formatDate, formatDateStr } from '@/utils/helper'
 import { parseDate } from '@internationalized/date'
 import { DateRangePicker, ModalContent, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useDisclosure } from '@nextui-org/react'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 const Page = () => {
+    const [data, setData] = useState([])
+    useEffect(() => {
+        getTransaction((res: any) => {
+            console.log(res);
+
+            setData(res.data)
+        })
+    }, []);
+
     const { isOpen: openDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure()
     const { isOpen, onOpen, onClose } = useDisclosure();
     const modalDeleteOpen = (item: any) => {
@@ -31,6 +41,7 @@ const Page = () => {
     const startDate = formatDateStr(date.start);
     const endDate = formatDateStr(date.end);
     console.log(startDate, endDate);
+    console.log(data);
 
     return (
         <DefaultLayout>
