@@ -214,6 +214,11 @@ const Page = () => {
                 </TableBody>
             </Table>
 
+            {data?.map((item: any, index: number) => (
+                <h1 key={index} >{item._id}</h1>
+            ))}
+
+
             <ModalDefault isOpen={isOpen} onClose={onClose}>
                 <h1 className='font-medium text-xl'>Edit Arsip</h1>
                 <form action="">
@@ -279,6 +284,9 @@ const Page = () => {
                     <ButtonSecondary className='py-2 px-5 rounded-md font-medium' onClick={onCloseDelete}>Tidak</ButtonSecondary>
                 </div>
             </ModalAlert>
+
+
+
         </DefaultLayout>
     )
 }
