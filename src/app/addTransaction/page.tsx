@@ -5,7 +5,7 @@ import InputForm from '@/components/elements/input/InputForm'
 import DefaultLayout from '@/components/layouts/DefaultLayout'
 import { formatDate, formatDateStr } from '@/utils/helper'
 import { parseDate } from '@internationalized/date'
-import { DatePicker } from '@nextui-org/react'
+import { Autocomplete, AutocompleteItem, DatePicker } from '@nextui-org/react'
 import React, { useState } from 'react'
 
 type Props = {}
@@ -14,7 +14,7 @@ const Page = (props: Props) => {
     const [form, setForm] = useState({
         mid: "",
         tid: "",
-        transaction_type: "",
+        transaction_type: 0,
         batch: "",
         amount: "",
         net_amount: "",
@@ -54,31 +54,84 @@ const Page = (props: Props) => {
         setForm({ ...form, [name]: value });
     };
 
+
+    const dataDropdown = [
+        { label: "Aset", value: 1, },
+        { label: "Kewajiban", value: 2, },
+        { label: "Ekuitas", value: 3 },
+        { label: "Pendapatan", value: 4 },
+        { label: "Beban", value: 5 },
+    ];
+
+    const handleDropdownSelection = (selectedValue: number, option: string) => {
+        console.log('haii', selectedValue);
+
+        if (option === 'form') {
+            setForm((prevForm) => ({
+                ...prevForm,
+                transaction_type: Number(selectedValue),
+            }))
+        } else {
+            setForm((prevForm) => ({
+                ...prevForm,
+                transaction_type: Number(selectedValue),
+            }));
+        }
+
+    };
+
     return (
         <DefaultLayout>
             <Card>
                 <h1 className='italic text-xl font-medium mb-10'>Catat Transaksi</h1>
                 <form action="">
-                    <InputForm className='bg-slate-200' type='text' placeholder='Masukan Batch' onChange={handleChange} htmlFor='batch' value={form.batch} />
-                    <div className="grid grid-cols-2 gap-5">
-                        <InputForm className='bg-slate-200' type='text' placeholder='Masukan MID' onChange={handleChange} htmlFor='mid' value={form.mid} />
-                        <InputForm className='bg-slate-200' type='text' placeholder='Masukan TID' onChange={handleChange} htmlFor='tid' value={form.tid} />
+                    <InputForm title='Batch' className='bg-slate-200' type='text' onChange={handleChange} htmlFor='batch' value={form.batch} />
+
+                    <div className="grid grid-cols-2 gap-2">
+                        <InputForm title='MID' className='bg-slate-200' type='text' onChange={handleChange} htmlFor='mid' value={form.mid} />
+                        <InputForm title='TID' className='bg-slate-200' type='text' onChange={handleChange} htmlFor='tid' value={form.tid} />
                     </div>
-                    <div className="grid grid-cols-2 gap-5">
-                        <InputForm className='bg-slate-200' type='text' placeholder='Masukan Amount' onChange={handleChange} htmlFor='amount' value={form.amount} />
-                        <InputForm className='bg-slate-200' type='text' placeholder='Masukan Net Amount' onChange={handleChange} htmlFor='net_amount' value={form.net_amount} />
+
+                    <div className="grid grid-cols-2 gap-2">
+                        <InputForm title='Amount' className='bg-slate-200' type='text' onChange={handleChange} htmlFor='amount' value={form.amount} />
+                        <InputForm title='Net Amount' className='bg-slate-200' type='text' onChange={handleChange} htmlFor='net_amount' value={form.net_amount} />
                     </div>
-                    <DatePicker
-                        size='sm'
-                        onChange={handleDateChange}
-                        value={selectedDate}
-                        aria-label='datepicker' className="max-w-[284px] mb-2 bg-bone border-2 border-primary rounded-lg" />
-                    <div className="grid grid-cols-2 gap-5">
-                        <InputForm className='bg-slate-200' type='text' placeholder='Masukan Tipe Transaksi' onChange={handleChange} htmlFor='transaction_type' value={form.transaction_type} />
-                        <InputForm className='bg-slate-200' type='text' placeholder='Masukan MDR' onChange={handleChange} htmlFor='mdr' value={form.mdr} />
+
+                    <div className="grid grid-cols-2 gap-2 justify-between">
+                        <div className="space-y-2">
+                            <h1>Tanggal</h1>
+                            <DatePicker
+                                size='sm'
+                                onChange={handleDateChange}
+                                value={selectedDate}
+                                aria-label='datepicker' className="w-full mb-2 bg-bone border-2
+                         border-primary rounded-lg" />
+                        </div>
+
+                        <div className="space-y-2">
+                            <h1>Tipe Transaksi</h1>
+                            <Autocomplete
+                                clearButtonProps={{ size: 'sm', onClick: () => setForm({ ...form, transaction_type: 0 }) }}
+                                onSelectionChange={(e: any) => handleDropdownSelection(e, 'form')}
+                                defaultItems={dataDropdown}
+                                defaultSelectedKey={form.transaction_type}
+                                aria-label='dropdown'
+                                className="max-w-xs border-2 border-primary rounded-lg "
+                                size='sm'
+                            >
+                                {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+                            </Autocomplete>
+
+                        </div>
+
+
                     </div>
-                    <div className="grid grid-cols-2 gap-5">
-                        <InputForm className='bg-slate-200' type='text' placeholder='Masukan Selisih' onChange={handleChange} htmlFor='difference' value={form.difference} />
+
+
+
+                    <div className="grid grid-cols-2 gap-2 justify-between mt-2">
+                        <InputForm title='Selisih' className='bg-slate-200' type='text' onChange={handleChange} htmlFor='difference' value={form.difference} />
+                        <InputForm title='Mdr' className='bg-slate-200 w-full' type='text' onChange={handleChange} htmlFor='mdr' value={form.mdr} />
                     </div>
 
                     <div className="flex justify-end">
