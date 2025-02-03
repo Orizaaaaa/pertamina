@@ -32,16 +32,13 @@ const Page = () => {
         keepPreviousData: true,
     });
 
+    const { data }: any = useSWR(`${url}/transactions/list`, fetcher, {
+        keepPreviousData: true,
+    });
+
 
     const [selectedDate, setSelectedDate] = useState(parseDate((formatDate(dateNow))))
-    const [data, setData] = useState([])
-    useEffect(() => {
-        getTransaction((res: any) => {
-            console.log(res);
 
-            setData(res.data)
-        })
-    }, []);
 
     const { isOpen: openDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure()
     const { isOpen, onOpen, onClose } = useDisclosure();
