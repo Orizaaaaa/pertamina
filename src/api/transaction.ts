@@ -11,6 +11,15 @@ export const getTransaction = (callback: any) => {
         });
 }
 
+export const updateTransaction = async (id: string, form: any, callback: any) => {
+    await axiosInterceptor.put(`/transactions/${id}`, form)
+        .then((result) => {
+            callback(result.data)
+        }).catch((err) => {
+            callback(err);
+        });
+}
+
 // transaction type
 export const createTransactionType = async (form: any, callback: any) => {
     await axiosInterceptor.post('/transactions-type', form)

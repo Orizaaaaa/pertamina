@@ -14,6 +14,10 @@ export const formatDate = (tanggal: any) => {
     return `${tahun}-${bulan}-${hari}`;
 };
 
+export function formatDateTable(isoString: string): string {
+    return isoString.split("T")[0]; // Mengambil bagian sebelum "T"
+}
+
 export const handleCopy = (link: string) => {
     const linkToCopy = link;
     navigator.clipboard.writeText(linkToCopy)

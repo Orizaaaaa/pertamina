@@ -1,7 +1,7 @@
 'use client'
 import { url } from '@/api/auth'
 import { fetcher } from '@/api/fetcher'
-import { getTransaction } from '@/api/transaction'
+import { getTransaction, updateTransaction } from '@/api/transaction'
 import ButtonPrimary from '@/components/elements/buttonPrimary'
 import ButtonSecondary from '@/components/elements/buttonSecondary'
 import Card from '@/components/elements/card/Card'
@@ -9,7 +9,7 @@ import InputForm from '@/components/elements/input/InputForm'
 import ModalDefault from '@/components/fragemnts/modal/modal'
 import ModalAlert from '@/components/fragemnts/modal/modalAlert'
 import DefaultLayout from '@/components/layouts/DefaultLayout'
-import { dateFirst, formatDate, formatDateStr } from '@/utils/helper'
+import { dateFirst, formatDate, formatDateStr, formatDateTable } from '@/utils/helper'
 import { parseDate } from '@internationalized/date'
 import { Autocomplete, AutocompleteItem, DatePicker, DateRangePicker, ModalContent, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useDisclosure } from '@nextui-org/react'
 import React, { useEffect, useState } from 'react'
@@ -31,14 +31,30 @@ const Page = () => {
     const { data: dataDrop }: any = useSWR(`${url}/transactions-type/list`, fetcher, {
         keepPreviousData: true,
     });
-
-    const { data }: any = useSWR(`${url}/transactions/list`, fetcher, {
-        keepPreviousData: true,
+    const [id, setId] = useState('')
+    const [form, setForm] = useState({
+        mid: "",
+        tid: "",
+        transaction_type: "",
+        batch: "",
+        amount: "",
+        net_amount: "",
+        mdr: "",
+        status: "success",
+        date: "",
+        difference: ""
     });
 
-
     const [selectedDate, setSelectedDate] = useState(parseDate((formatDate(dateNow))))
+    const [data, setData] = useState([])
 
+    useEffect(() => {
+        getTransaction((res: any) => {
+            console.log(res);
+            setData(res.data);
+
+        });
+    }, []);
 
     const { isOpen: openDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure()
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -48,6 +64,8 @@ const Page = () => {
     }
     const modalUpdateOpen = (item: any) => {
         console.log(item);
+        setId(item._id)
+        setForm(item)
         onOpen()
     }
 
@@ -61,18 +79,7 @@ const Page = () => {
     const endDate = formatDateStr(date.end);
     console.log(startDate, endDate);
 
-    const [form, setForm] = useState({
-        mid: "",
-        tid: "",
-        transaction_type: "",
-        batch: "",
-        amount: "",
-        net_amount: "",
-        mdr: "",
-        status: "success",
-        date: "",
-        difference: ""
-    });
+
 
     const handleDateChange = (date: any | null) => {
         setSelectedDate(date);
@@ -127,7 +134,17 @@ const Page = () => {
     console.log(dataDrop);
     console.log('anjing', data);
 
-
+    const handleEdit = async () => {
+        await updateTransaction(id, form, (response: any) => {
+            console.log(response);
+            getTransaction((res: any) => {
+                console.log(res);
+                setData(res.data);
+            });
+            onClose()
+        })
+    }
+    console.log(selectedDate);
 
     return (
         <DefaultLayout>
@@ -149,68 +166,65 @@ const Page = () => {
 
             </Card>
 
-            <Table className=" mt-10 " aria-label="Example table without looping">
+            <Table className="mt-10" aria-label="Example table without looping">
                 <TableHeader>
+                    <TableColumn>DATE</TableColumn>
                     <TableColumn>MID</TableColumn>
                     <TableColumn>TID</TableColumn>
                     <TableColumn>Tipe Transaksi</TableColumn>
                     <TableColumn>Batch</TableColumn>
                     <TableColumn>Amount</TableColumn>
-                    <TableColumn>Gross Amount</TableColumn>
-                    <TableColumn>Total Amount</TableColumn>
-                    <TableColumn>Total Gross Amount</TableColumn>
+                    <TableColumn>Net Amount</TableColumn>
+                    <TableColumn>MDR</TableColumn>
+                    <TableColumn>Selisih</TableColumn>
                     <TableColumn>Action</TableColumn>
                 </TableHeader>
                 <TableBody>
-                    <TableRow key="1">
-                        <TableCell>0089866654433</TableCell>
-                        <TableCell>OA78BN99</TableCell>
-                        <TableCell>BNI</TableCell>
-                        <TableCell>2199</TableCell>
-                        <TableCell>10000</TableCell>
-                        <TableCell>20000</TableCell>
-                        <TableCell>{''}</TableCell>
-                        <TableCell>{''}</TableCell>
-                        <TableCell>
-                            <div className="flex gap-3">
-                                <ButtonPrimary className='py-1 px-3 rounded-md' onClick={() => modalUpdateOpen('wakwaw')}>Edit</ButtonPrimary>
-                                <ButtonSecondary className='py-1 px-3 rounded-md' onClick={() => modalDeleteOpen('wakwaw')}>Delete</ButtonSecondary>
-                            </div>
-                        </TableCell>
+                    {[...data, {}].map((item: any, index: number) => {
+                        const isEmptyRow = !item?.id && !item?.mid && !item?.tid; // Cek baris kosong
 
-                    </TableRow>
-                    <TableRow key="2">
-                        <TableCell>0089866654433</TableCell>
-                        <TableCell>OA78BN99</TableCell>
-                        <TableCell className='text-small'>BNI</TableCell>
-                        <TableCell>2199</TableCell>
-                        <TableCell>10000</TableCell>
-                        <TableCell>20000</TableCell>
-                        <TableCell>{''}</TableCell>
-                        <TableCell>{''}</TableCell>
-                        <TableCell>
-                            <div className="flex gap-3">
-                                <ButtonPrimary className='py-1 px-3 rounded-md' onClick={() => modalUpdateOpen('wakwaw')}>Edit</ButtonPrimary>
-                                <ButtonSecondary className='py-1 px-3 rounded-md' onClick={() => modalDeleteOpen('wakwaw')}>Delete</ButtonSecondary>
-                            </div>
-                        </TableCell>
-                    </TableRow>
-                    <TableRow key="3">
-                        <TableCell>{''}</TableCell>
-                        <TableCell>{''}</TableCell>
-                        <TableCell>{''}</TableCell>
-                        <TableCell>{''}</TableCell>
-                        <TableCell>{''}</TableCell>
-                        <TableCell>{''}</TableCell>
-                        <TableCell>40.000</TableCell>
-                        <TableCell>40.000</TableCell>
-                        <TableCell>
-                            {''}
-                        </TableCell>
-                    </TableRow>
-
+                        return (
+                            <TableRow key={item?.id || item?.mid || item?.tid || `empty-row-${index}`}>
+                                <TableCell>{formatDateTable(item.date || "")}</TableCell>
+                                <TableCell>{item?.mid || ""}</TableCell>
+                                <TableCell>{item?.tid || ""}</TableCell>
+                                <TableCell>{item?.transaction_type?.name || ""}</TableCell>
+                                <TableCell>{item?.batch || ""}</TableCell>
+                                <TableCell>{item?.amount || ""}</TableCell>
+                                <TableCell>{item?.net_amount || ""}</TableCell>
+                                <TableCell>{item?.mdr || ""}</TableCell>
+                                <TableCell>{item?.difference || ""}</TableCell>
+                                {/* untuk table berada di bawah */}
+                                {/* <TableCell>{item?.grossAmount || (index === data.length ? "Berhasil" : "")}</TableCell>
+                                <TableCell>{item?.totalAmount || (index === data.length ? "Berhasil" : "")}</TableCell> */}
+                                <TableCell>
+                                    {isEmptyRow ? (
+                                        "" // Jika baris kosong, tampilkan "-"
+                                    ) : (
+                                        <div className="flex gap-3">
+                                            <ButtonPrimary
+                                                className="py-1 px-3 rounded-md"
+                                                onClick={() => modalUpdateOpen(item)}
+                                            >
+                                                Edit
+                                            </ButtonPrimary>
+                                            <ButtonSecondary
+                                                className="py-1 px-3 rounded-md"
+                                                onClick={() => modalDeleteOpen(item)}
+                                            >
+                                                Delete
+                                            </ButtonSecondary>
+                                        </div>
+                                    )}
+                                </TableCell>
+                            </TableRow>
+                        );
+                    })}
                 </TableBody>
             </Table>
+
+
+
 
 
             <ModalDefault isOpen={isOpen} onClose={onClose}>
@@ -266,7 +280,7 @@ const Page = () => {
                     </div>
 
                     <div className="flex justify-end">
-                        <ButtonPrimary className='py-1 px-4 rounded-lg'>Simpan</ButtonPrimary>
+                        <ButtonPrimary className='py-1 px-4 rounded-lg' onClick={handleEdit}>Simpan</ButtonPrimary>
                     </div>
                 </form>
             </ModalDefault>
