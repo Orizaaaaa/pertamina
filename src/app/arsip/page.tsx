@@ -1,7 +1,7 @@
 'use client'
 import { url } from '@/api/auth'
 import { fetcher } from '@/api/fetcher'
-import { getTransaction, updateTransaction } from '@/api/transaction'
+import { deleteTransaction, getTransaction, updateTransaction } from '@/api/transaction'
 import ButtonPrimary from '@/components/elements/buttonPrimary'
 import ButtonSecondary from '@/components/elements/buttonSecondary'
 import Card from '@/components/elements/card/Card'
@@ -12,6 +12,7 @@ import DefaultLayout from '@/components/layouts/DefaultLayout'
 import { dateFirst, formatDate, formatDateStr, formatDateTable } from '@/utils/helper'
 import { parseDate } from '@internationalized/date'
 import { Autocomplete, AutocompleteItem, DatePicker, DateRangePicker, ModalContent, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useDisclosure } from '@nextui-org/react'
+import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import useSWR from 'swr'
 
@@ -32,21 +33,16 @@ const Page = () => {
         keepPreviousData: true,
     });
     const [id, setId] = useState('')
-    const [form, setForm] = useState({
-        mid: "",
-        tid: "",
-        transaction_type: "",
-        batch: "",
-        amount: 0,
-        net_amount: 0,
-        mdr: 0,
-        status: "success",
-        date: "",
-        difference: 0
-    });
 
     const [selectedDate, setSelectedDate] = useState(parseDate((formatDate(dateNow))))
     const [data, setData] = useState([])
+
+    React.useEffect(() => {
+        setForm((prevForm) => ({
+            ...prevForm,
+            date: formatDateStr(selectedDate),
+        }));
+    }, [selectedDate]);
 
     useEffect(() => {
         getTransaction((res: any) => {
@@ -56,14 +52,32 @@ const Page = () => {
         });
     }, []);
 
+    const [form, setForm] = useState({
+        mid: "",
+        tid: "",
+        transaction_type: formatDateStr(selectedDate),
+        batch: "",
+        amount: 0,
+        net_amount: 0,
+        mdr: 0,
+        status: "success",
+        date: "",
+        difference: 0
+    });
+
+
     const { isOpen: openDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure()
     const { isOpen, onOpen, onClose } = useDisclosure();
     const modalDeleteOpen = (item: any) => {
+
         console.log(item);
+        setId(item._id)
         onOpenDelete()
     }
     const modalUpdateOpen = (item: any) => {
         console.log(item);
+        const date = new Date(item.date);
+        setSelectedDate(parseDate(formatDate(date)));
         setId(item._id)
         setForm({
             ...form,
@@ -80,7 +94,6 @@ const Page = () => {
         })
         onOpen()
     }
-
 
     let [date, setDate] = React.useState({
         start: parseDate((formatDate(dateFirst))),
@@ -145,8 +158,20 @@ const Page = () => {
             onClose()
         })
     }
+
+    const handleDelete = async () => {
+        await deleteTransaction(id, (res: any) => {
+            console.log(res);
+            getTransaction((res: any) => {
+                console.log(res);
+                setData(res.data);
+
+            });
+            onCloseDelete()
+        })
+    }
     console.log(selectedDate);
-    console.log('form tolol', form);
+    console.log('form anjing', form);
 
 
     return (
@@ -183,11 +208,11 @@ const Page = () => {
                     <TableColumn>Action</TableColumn>
                 </TableHeader>
                 <TableBody>
-                    {[...data, {}].map((item: any, index: number) => {
-                        const isEmptyRow = !item?.id && !item?.mid && !item?.tid; // Cek baris kosong
+                    {(Array.isArray(data) ? data : []).map((item: any, index: number) => {
+
 
                         return (
-                            <TableRow key={item?.id || item?.mid || item?.tid || `empty-row-${index}`}>
+                            <TableRow key={index || index || index || `empty-row-${index + 1}`}>
                                 <TableCell>{formatDateTable(item.date || "")}</TableCell>
                                 <TableCell>{item?.mid || ""}</TableCell>
                                 <TableCell>{item?.tid || ""}</TableCell>
@@ -201,24 +226,22 @@ const Page = () => {
                                 {/* <TableCell>{item?.grossAmount || (index === data.length ? "Berhasil" : "")}</TableCell>
                                 <TableCell>{item?.totalAmount || (index === data.length ? "Berhasil" : "")}</TableCell> */}
                                 <TableCell>
-                                    {isEmptyRow ? (
-                                        "" // Jika baris kosong, tampilkan "-"
-                                    ) : (
-                                        <div className="flex gap-3">
-                                            <ButtonPrimary
-                                                className="py-1 px-3 rounded-md"
-                                                onClick={() => modalUpdateOpen(item)}
-                                            >
-                                                Edit
-                                            </ButtonPrimary>
-                                            <ButtonSecondary
-                                                className="py-1 px-3 rounded-md"
-                                                onClick={() => modalDeleteOpen(item)}
-                                            >
-                                                Delete
-                                            </ButtonSecondary>
-                                        </div>
-                                    )}
+
+                                    <div className="flex gap-3">
+                                        <ButtonPrimary
+                                            className="py-1 px-3 rounded-md"
+                                            onClick={() => modalUpdateOpen(item)}
+                                        >
+                                            Edit
+                                        </ButtonPrimary>
+                                        <ButtonSecondary
+                                            className="py-1 px-3 rounded-md"
+                                            onClick={() => modalDeleteOpen(item)}
+                                        >
+                                            Delete
+                                        </ButtonSecondary>
+                                    </div>
+
                                 </TableCell>
                             </TableRow>
                         );
@@ -291,7 +314,7 @@ const Page = () => {
             <ModalAlert isOpen={openDelete} onClose={onCloseDelete} >
                 <h1 className='text-lg' >Apakah anda yakin akan menghapus arsip ini ? </h1>
                 <div className="flex justify-end gap-3">
-                    <ButtonPrimary className='py-2 px-5 rounded-md font-medium'   >Ya</ButtonPrimary>
+                    <ButtonPrimary className='py-2 px-5 rounded-md font-medium' onClick={handleDelete}  >Ya</ButtonPrimary>
                     <ButtonSecondary className='py-2 px-5 rounded-md font-medium' onClick={onCloseDelete}>Tidak</ButtonSecondary>
                 </div>
             </ModalAlert>

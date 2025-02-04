@@ -1,6 +1,26 @@
 import { url } from "inspector";
 import { axiosInterceptor } from "./axiosInterceptor"
 
+export const createTransaction = async (form: any, callback: any) => {
+    await axiosInterceptor.post('/transactions', form)
+        .then((result) => {
+            callback(result.data)
+        }).catch((err) => {
+            callback(err);
+            console.log(err);
+
+        });
+
+}
+
+export const deleteTransaction = async (id: string, callback: any) => {
+    axiosInterceptor.delete(`transactions/${id}`)
+        .then((result) => {
+            callback(result.data)
+        }).catch((err) => {
+            callback(err);
+        });
+}
 
 export const getTransaction = (callback: any) => {
     axiosInterceptor.get('/transactions/list')

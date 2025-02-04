@@ -1,7 +1,7 @@
 'use client'
 import { url } from '@/api/auth'
 import { fetcher } from '@/api/fetcher'
-import { getTransactionType } from '@/api/transaction'
+import { createTransaction, getTransactionType } from '@/api/transaction'
 import ButtonPrimary from '@/components/elements/buttonPrimary'
 import Card from '@/components/elements/card/Card'
 import InputForm from '@/components/elements/input/InputForm'
@@ -9,6 +9,7 @@ import DefaultLayout from '@/components/layouts/DefaultLayout'
 import { formatDate, formatDateStr } from '@/utils/helper'
 import { parseDate } from '@internationalized/date'
 import { Autocomplete, AutocompleteItem, DatePicker } from '@nextui-org/react'
+import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import useSWR from 'swr'
 
@@ -25,17 +26,18 @@ interface ItemData {
 }
 
 const Page = (props: Props) => {
+    const router = useRouter()
     const [form, setForm] = useState({
         mid: "",
         tid: "",
         transaction_type: "",
         batch: "",
-        amount: "",
-        net_amount: "",
-        mdr: "",
+        amount: 0,
+        net_amount: 0,
+        mdr: 0,
         status: "success",
         date: "",
-        difference: ""
+        difference: 0
     });
     const dateNow = new Date();
     const [selectedDate, setSelectedDate] = useState(parseDate((formatDate(dateNow))))
@@ -54,26 +56,18 @@ const Page = (props: Props) => {
         }));
     };
 
-    const handleChange = (e: any) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
 
-        if (name === 'amount') {
-            let numericValue = value.replace(/\D/g, '');
-            setForm({ ...form, [name]: numericValue });
-            return;
-        } else if (name === 'net_amount') {
-            let numericValue = value.replace(/\D/g, '');
-            setForm({ ...form, [name]: numericValue });
-            return;
-        } else if (name === 'difference') {
-            let numericValue = value.replace(/\D/g, '');
-            setForm({ ...form, [name]: numericValue });
-            return;
-        }
+        // Daftar field yang harus dikonversi ke number
+        const numericFields = ['amount', 'net_amount', 'difference', 'mdr'];
 
-
-        setForm({ ...form, [name]: value });
+        setForm(prevForm => ({
+            ...prevForm,
+            [name]: numericFields.includes(name) ? Number(value.replace(/\D/g, '')) || 0 : value
+        }));
     };
+
 
     const dataDropdown: DropdownItem[] = (data?.data || []).map((item: ItemData) => ({
         label: item.name,
@@ -100,7 +94,25 @@ const Page = (props: Props) => {
     console.log(data);
     console.log(form);
 
+    const handleCreate = async () => {
+        await createTransaction(form, (response: any) => {
+            console.log(response);
+            router.push('/arsip')
+        })
 
+        setForm({
+            mid: "",
+            tid: "",
+            transaction_type: "",
+            batch: "",
+            amount: 0,
+            net_amount: 0,
+            mdr: 0,
+            status: "success",
+            date: "",
+            difference: 0
+        })
+    }
 
     return (
         <DefaultLayout>
@@ -157,7 +169,7 @@ const Page = (props: Props) => {
                     </div>
 
                     <div className="flex justify-end">
-                        <ButtonPrimary className='py-1 px-4 rounded-lg'>Simpan</ButtonPrimary>
+                        <ButtonPrimary className='py-1 px-4 rounded-lg' onClick={handleCreate}>Simpan</ButtonPrimary>
                     </div>
                 </form>
 
