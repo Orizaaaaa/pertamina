@@ -12,7 +12,7 @@ export const getTransaction = (callback: any) => {
 }
 
 export const updateTransaction = async (id: string, form: any, callback: any) => {
-    await axiosInterceptor.put(`/transactions/${id}`, form)
+    await axiosInterceptor.put(`transactions/${id}`, form)
         .then((result) => {
             callback(result.data)
         }).catch((err) => {

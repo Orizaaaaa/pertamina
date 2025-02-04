@@ -37,12 +37,12 @@ const Page = () => {
         tid: "",
         transaction_type: "",
         batch: "",
-        amount: "",
-        net_amount: "",
-        mdr: "",
+        amount: 0,
+        net_amount: 0,
+        mdr: 0,
         status: "success",
         date: "",
-        difference: ""
+        difference: 0
     });
 
     const [selectedDate, setSelectedDate] = useState(parseDate((formatDate(dateNow))))
@@ -65,7 +65,19 @@ const Page = () => {
     const modalUpdateOpen = (item: any) => {
         console.log(item);
         setId(item._id)
-        setForm(item)
+        setForm({
+            ...form,
+            mid: item.mid,
+            tid: item.tid,
+            transaction_type: item.transaction_type.id,
+            batch: item.batch,
+            amount: item.amount,
+            net_amount: item.net_amount,
+            mdr: item.mdr,
+            status: "success",
+            date: item.date,
+            difference: item.difference
+        })
         onOpen()
     }
 
@@ -89,26 +101,18 @@ const Page = () => {
         }));
     };
 
-    const handleChange = (e: any) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
 
-        if (name === 'amount') {
-            let numericValue = value.replace(/\D/g, '');
-            setForm({ ...form, [name]: numericValue });
-            return;
-        } else if (name === 'net_amount') {
-            let numericValue = value.replace(/\D/g, '');
-            setForm({ ...form, [name]: numericValue });
-            return;
-        } else if (name === 'difference') {
-            let numericValue = value.replace(/\D/g, '');
-            setForm({ ...form, [name]: numericValue });
-            return;
-        }
+        // Daftar field yang harus dikonversi ke number
+        const numericFields = ['amount', 'net_amount', 'difference'];
 
-
-        setForm({ ...form, [name]: value });
+        setForm(prevForm => ({
+            ...prevForm,
+            [name]: numericFields.includes(name) ? Number(value.replace(/\D/g, '')) || 0 : value
+        }));
     };
+
 
     const dataDropdown: DropdownItem[] = (dataDrop?.data || []).map((item: ItemData) => ({
         label: item.name,
@@ -131,20 +135,19 @@ const Page = () => {
 
     };
 
-    console.log(dataDrop);
-    console.log('anjing', data);
 
     const handleEdit = async () => {
         await updateTransaction(id, form, (response: any) => {
             console.log(response);
             getTransaction((res: any) => {
-                console.log(res);
                 setData(res.data);
             });
             onClose()
         })
     }
     console.log(selectedDate);
+    console.log('form tolol', form);
+
 
     return (
         <DefaultLayout>
