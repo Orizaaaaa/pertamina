@@ -41,7 +41,7 @@ const Page = (props: Props) => {
     });
     const dateNow = new Date();
     const [selectedDate, setSelectedDate] = useState(parseDate((formatDate(dateNow))))
-
+    const [errorMsg, setErrorMsg] = useState(false)
     const { data } = useSWR(`${url}/transactions-type/list`, fetcher, {
         keepPreviousData: true,
     });
@@ -95,11 +95,18 @@ const Page = (props: Props) => {
     console.log(form);
 
     const handleCreate = async () => {
+        // Validasi jika ada field yang kosong
+        if (!form.mid || !form.tid || !form.transaction_type || !form.batch || !form.date) {
+            setErrorMsg(true);
+            return; // Stop eksekusi jika ada data kosong
+        }
+
         await createTransaction(form, (response: any) => {
             console.log(response);
-            router.push('/arsip')
-        })
+            router.push('/arsip');
+        });
 
+        // Reset form setelah berhasil
         setForm({
             mid: "",
             tid: "",
@@ -111,8 +118,12 @@ const Page = (props: Props) => {
             status: "success",
             date: "",
             difference: 0
-        })
-    }
+        });
+
+        // Reset errorMsg jika berhasil
+        setErrorMsg(false);
+    };
+
 
     return (
         <DefaultLayout>
@@ -167,10 +178,11 @@ const Page = (props: Props) => {
                         <InputForm title='Selisih' className='bg-slate-200' type='text' onChange={handleChange} htmlFor='difference' value={form.difference} />
                         <InputForm title='Mdr' className='bg-slate-200 w-full' type='text' onChange={handleChange} htmlFor='mdr' value={form.mdr} />
                     </div>
-
+                    <p className={`text-sm text-red ${errorMsg ? 'block' : 'hidden'}`}> *   Masukan semua form dengan benar</p>
                     <div className="flex justify-end">
                         <ButtonPrimary className='py-1 px-4 rounded-lg' onClick={handleCreate}>Simpan</ButtonPrimary>
                     </div>
+
                 </form>
 
             </Card>
