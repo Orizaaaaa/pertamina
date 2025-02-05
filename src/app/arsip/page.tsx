@@ -33,6 +33,7 @@ const Page = () => {
         keepPreviousData: true,
     });
     const [id, setId] = useState('')
+    const [errorMsg, setErrorMsg] = useState(false)
 
     const [selectedDate, setSelectedDate] = useState(parseDate((formatDate(dateNow))))
     const [data, setData] = useState([])
@@ -76,6 +77,7 @@ const Page = () => {
     }
     const modalUpdateOpen = (item: any) => {
         console.log(item);
+        setErrorMsg(false)
         const date = new Date(item.date);
         setSelectedDate(parseDate(formatDate(date)));
         setId(item._id)
@@ -150,14 +152,32 @@ const Page = () => {
 
 
     const handleEdit = async () => {
+        // Validasi jika ada field yang kosong
+        if (!form.mid ||
+            !form.tid ||
+            !form.transaction_type ||
+            !form.batch ||
+            !form.date ||
+            form.amount <= 0 ||
+            form.net_amount <= 0 ||
+            form.mdr < 0 ||
+            form.difference < 0) {
+            setErrorMsg(true);
+            return; // Stop eksekusi jika ada data kosong
+        }
+
         await updateTransaction(id, form, (response: any) => {
             console.log(response);
             getTransaction((res: any) => {
                 setData(res.data);
             });
-            onClose()
-        })
-    }
+            onClose();
+        });
+
+        // Reset errorMsg jika berhasil
+        setErrorMsg(false);
+    };
+
 
     const handleDelete = async () => {
         await deleteTransaction(id, (res: any) => {
@@ -305,9 +325,12 @@ const Page = () => {
                         <InputForm title='Mdr' className='bg-slate-200 w-full' type='text' onChange={handleChange} htmlFor='mdr' value={form.mdr} />
                     </div>
 
+                    <p className={`text-sm text-red ${errorMsg ? 'block' : 'hidden'}`}> *   Masukan semua form dengan benar</p>
+
                     <div className="flex justify-end">
                         <ButtonPrimary className='py-1 px-4 rounded-lg' onClick={handleEdit}>Simpan</ButtonPrimary>
                     </div>
+
                 </form>
             </ModalDefault>
 

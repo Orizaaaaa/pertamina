@@ -47,6 +47,13 @@ const Page = (props: Props) => {
     });
 
 
+    React.useEffect(() => {
+        setForm((prevForm) => ({
+            ...prevForm,
+            date: formatDateStr(selectedDate),
+        }));
+    }, [selectedDate]);
+
 
     const handleDateChange = (date: any | null) => {
         setSelectedDate(date);
@@ -95,34 +102,57 @@ const Page = (props: Props) => {
     console.log(form);
 
     const handleCreate = async () => {
-        // Validasi jika ada field yang kosong
-        if (!form.mid || !form.tid || !form.transaction_type || !form.batch || !form.date) {
+        setErrorMsg(false);
+
+        console.log("Form Data Sebelum Validasi:", form); // Debugging
+
+        // Validasi jika ada field yang kosong atau tidak valid
+        if (
+            !form.mid ||
+            !form.tid ||
+            !form.transaction_type ||
+            !form.batch ||
+            !form.date ||
+            form.amount <= 0 ||
+            form.net_amount <= 0 ||
+            form.mdr < 0 ||
+            form.difference < 0
+        ) {
+            console.log("Validasi Gagal: Ada data yang kosong atau tidak valid");
             setErrorMsg(true);
             return; // Stop eksekusi jika ada data kosong
         }
 
-        await createTransaction(form, (response: any) => {
-            console.log(response);
-            router.push('/arsip');
-        });
+        console.log("Form Data Setelah Validasi:", form); // Debugging
 
-        // Reset form setelah berhasil
-        setForm({
-            mid: "",
-            tid: "",
-            transaction_type: "",
-            batch: "",
-            amount: 0,
-            net_amount: 0,
-            mdr: 0,
-            status: "success",
-            date: "",
-            difference: 0
-        });
+        try {
+            await createTransaction(form, (response: any) => {
+                console.log("Response dari API:", response);
+                router.push('/arsip');
+            });
 
-        // Reset errorMsg jika berhasil
-        setErrorMsg(false);
+            // Reset form setelah berhasil
+            setForm({
+                mid: "",
+                tid: "",
+                transaction_type: "",
+                batch: "",
+                amount: 0,
+                net_amount: 0,
+                mdr: 0,
+                status: "success",
+                date: "",
+                difference: 0
+            });
+
+            // Reset errorMsg jika berhasil
+            setErrorMsg(false);
+        } catch (error) {
+            console.error("Gagal mengirim data:", error);
+            setErrorMsg(true);
+        }
     };
+
 
 
     return (
