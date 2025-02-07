@@ -1,7 +1,7 @@
 'use client'
 import { url } from '@/api/auth'
 import { fetcher } from '@/api/fetcher'
-import { deleteTransaction, getTransaction, updateTransaction } from '@/api/transaction'
+import { deleteTransaction, downloadTransaction, getTransaction, updateTransaction } from '@/api/transaction'
 import ButtonPrimary from '@/components/elements/buttonPrimary'
 import ButtonSecondary from '@/components/elements/buttonSecondary'
 import Card from '@/components/elements/card/Card'
@@ -29,6 +29,15 @@ interface ItemData {
 
 const Page = () => {
     const dateNow = new Date();
+    let [date, setDate] = React.useState({
+        start: parseDate((formatDate(dateFirst))),
+        end: parseDate((formatDate(dateNow))),
+    });
+    const startDate = formatDateStr(date.start);
+    const endDate = formatDateStr(date.end);
+    console.log(startDate, endDate);
+
+
     const { data: dataDrop }: any = useSWR(`${url}/transactions-type/list`, fetcher, {
         keepPreviousData: true,
     });
@@ -46,12 +55,12 @@ const Page = () => {
     }, [selectedDate]);
 
     useEffect(() => {
-        getTransaction((res: any) => {
-            console.log(res);
-            setData(res.data);
 
+        getTransaction(startDate, endDate, (result: any) => {
+            setData(result.data);
         });
-    }, []);
+
+    }, [startDate, endDate]);
 
     const [form, setForm] = useState({
         mid: "",
@@ -97,14 +106,6 @@ const Page = () => {
         onOpen()
     }
 
-    let [date, setDate] = React.useState({
-        start: parseDate((formatDate(dateFirst))),
-        end: parseDate((formatDate(dateNow))),
-    });
-
-    const startDate = formatDateStr(date.start);
-    const endDate = formatDateStr(date.end);
-    console.log(startDate, endDate);
 
 
 
@@ -168,8 +169,8 @@ const Page = () => {
 
         await updateTransaction(id, form, (response: any) => {
             console.log(response);
-            getTransaction((res: any) => {
-                setData(res.data);
+            getTransaction(startDate, endDate, (result: any) => {
+                setData(result.data);
             });
             onClose();
         });
@@ -182,16 +183,36 @@ const Page = () => {
     const handleDelete = async () => {
         await deleteTransaction(id, (res: any) => {
             console.log(res);
-            getTransaction((res: any) => {
-                console.log(res);
-                setData(res.data);
-
+            getTransaction(startDate, endDate, (result: any) => {
+                setData(result.data);
             });
             onCloseDelete()
         })
     }
+
+    const handleDownload = () => {
+        downloadTransaction(startDate, endDate, (result: any) => {
+            if (result instanceof Blob) {
+                // Jika hasil adalah Blob, kita lanjutkan dengan download
+                const url = window.URL.createObjectURL(result);
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', `transaction-pertamina-${startDate}-${endDate}.xlsx`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                console.log('Download success');
+            } else {
+                // Jika tidak, anggap itu sebagai error
+                console.error('Download failed:', result);
+            }
+        });
+    };
+
     console.log(selectedDate);
     console.log('form anjing', form);
+    console.log(data);
 
 
     return (
@@ -204,7 +225,7 @@ const Page = () => {
                     <h1>Total Kredit: Rp </h1> */}
                 </div>
                 <div className="space-y-3 lg:space-y-0 lg:flex  justify-end gap-2 mt-3 lg:mt-0">
-                    <ButtonSecondary className=' px-4 rounded-md'>Download dalam bentuk Excel</ButtonSecondary>
+                    <ButtonSecondary onClick={handleDownload} className=' px-4 rounded-md'>Download dalam bentuk Excel</ButtonSecondary>
                     <DateRangePicker
                         visibleMonths={2}
                         size='sm' onChange={setDate} value={date} aria-label='datepicker' className="max-w-[284px] bg-bone border-2 border-primary rounded-lg"
