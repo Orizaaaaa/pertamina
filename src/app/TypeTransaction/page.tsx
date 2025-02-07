@@ -17,6 +17,8 @@ const Page = (props: Props) => {
     const { isOpen: openDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure()
     const [data, setData] = useState([])
     const [id, setId] = useState('')
+    const [notif, setNotif] = useState('')
+    const [notifEdit, setNotifEdit] = useState('')
 
     useEffect(() => {
         getTransactionType((res: any) => {
@@ -83,22 +85,36 @@ const Page = (props: Props) => {
 
 
     const handleEdit = async () => {
+        setNotifEdit('')
+        if (!formEdit.name
+        ) {
+            setNotifEdit('Masukan Nama Bank dengan benar')
+            return; // Stop eksekusi jika ada data kosong
+        }
         await updateTransactionType(id, formEdit, (response: any) => {
             console.log(response);
             getTransactionType((res: any) => {
                 setData(res.data)
+                setNotifEdit('')
             })
+
             onClose()
         })
     }
 
 
     const handleCreate = async () => {
+        setNotif('')
+        if (!form.name
+        ) {
+            setNotif('Masukan Nama Bank dengan benar')
+            return; // Stop eksekusi jika ada data kosong
+        }
         await createTransactionType(form, (response: any) => {
             console.log(response);
-
             getTransactionType((res: any) => {
                 setData(res.data)
+                setNotif('Tipe Transaksi berhasil ditambahkan')
             })
         })
 
@@ -132,6 +148,7 @@ const Page = (props: Props) => {
                     <InputForm className='border-2' type='text' value={form.type1} htmlFor='type1' placeholder='Masukan Tipe 1' onChange={handleChange} />
                     <InputForm className='border-2' type='text' value={form.type2} htmlFor='type2' placeholder='Masukan Tipe 2' onChange={handleChange} />
                 </div>
+                <p className={`${notif === 'Masukan Nama Bank dengan benar' ? 'text-red' : 'text-green-700'} text-sm  `}>{notif}</p>
                 <div className="flex justify-end">
                     <ButtonPrimary className='py-1 px-5 rounded-lg' onClick={handleCreate}>Simpan</ButtonPrimary>
                 </div>
@@ -180,6 +197,7 @@ const Page = (props: Props) => {
                         <InputForm className='border-2' type='text' value={formEdit.type1} htmlFor='type1' placeholder='Masukan Tipe 1' onChange={handleChangeEdit} />
                         <InputForm className='border-2' type='text' value={formEdit.type2} htmlFor='type2' placeholder='Masukan Tipe 2' onChange={handleChangeEdit} />
                     </div>
+                    <p className={`${notifEdit === 'Masukan Nama Bank dengan benar' ? 'text-red' : 'text-green-700'} text-sm  `}>{notifEdit}</p>
                     <div className="flex justify-end">
                         <ButtonPrimary className='py-1 px-5 rounded-lg' onClick={handleEdit}>Simpan</ButtonPrimary>
                     </div>
