@@ -109,7 +109,7 @@ const Page = () => {
 
 
 
-    const handleDateChange = (date: any | null) => {
+    const handleDateChange = (date: any) => {
         setSelectedDate(date);
         setForm((prevForm) => ({
             ...prevForm,
