@@ -159,10 +159,10 @@ const Page = () => {
             !form.transaction_type ||
             !form.batch ||
             !form.date ||
-            form.amount <= 0 ||
-            form.net_amount <= 0 ||
-            form.mdr < 0 ||
-            form.difference < 0) {
+            form.amount <= 0 || !form.amount ||
+            form.net_amount <= 0 || !form.net_amount ||
+            form.mdr < 0 || !form.mdr ||
+            form.difference < 0 || !form.difference) {
             setErrorMsg(true);
             return; // Stop eksekusi jika ada data kosong
         }

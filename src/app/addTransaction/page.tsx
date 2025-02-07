@@ -113,10 +113,10 @@ const Page = (props: Props) => {
             !form.transaction_type ||
             !form.batch ||
             !form.date ||
-            form.amount <= 0 ||
-            form.net_amount <= 0 ||
-            form.mdr < 0 ||
-            form.difference < 0
+            form.amount <= 0 || !form.amount ||
+            form.net_amount <= 0 || !form.net_amount ||
+            form.mdr < 0 || !form.mdr ||
+            form.difference < 0 || !form.difference
         ) {
             console.log("Validasi Gagal: Ada data yang kosong atau tidak valid");
             setErrorMsg(true);
