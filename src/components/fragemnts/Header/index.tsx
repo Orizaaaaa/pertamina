@@ -53,8 +53,8 @@ const Header = (props: {
 
           <Link className="block flex-shrink-0 lg:hidden" href={"/"}>
             <Image
-              width={37}
-              height={40}
+              width={70}
+              height={50}
               src={oneLogo}
               alt="Logo"
             />

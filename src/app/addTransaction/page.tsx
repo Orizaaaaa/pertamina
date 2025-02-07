@@ -162,17 +162,17 @@ const Page = (props: Props) => {
                 <form action="">
                     <InputForm title='Batch' className='bg-slate-200' type='text' onChange={handleChange} htmlFor='batch' value={form.batch} />
 
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
                         <InputForm title='MID' className='bg-slate-200' type='text' onChange={handleChange} htmlFor='mid' value={form.mid} />
                         <InputForm title='TID' className='bg-slate-200' type='text' onChange={handleChange} htmlFor='tid' value={form.tid} />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
                         <InputForm title='Amount' className='bg-slate-200' type='text' onChange={handleChange} htmlFor='amount' value={form.amount} />
                         <InputForm title='Net Amount' className='bg-slate-200' type='text' onChange={handleChange} htmlFor='net_amount' value={form.net_amount} />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2 justify-between">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 justify-between">
                         <div className="space-y-2">
                             <h1>Tanggal</h1>
                             <DatePicker
@@ -204,7 +204,7 @@ const Page = (props: Props) => {
 
 
 
-                    <div className="grid grid-cols-2 gap-2 justify-between mt-2">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-2 justify-between mt-2">
                         <InputForm title='Selisih' className='bg-slate-200' type='text' onChange={handleChange} htmlFor='difference' value={form.difference} />
                         <InputForm title='Mdr' className='bg-slate-200 w-full' type='text' onChange={handleChange} htmlFor='mdr' value={form.mdr} />
                     </div>
